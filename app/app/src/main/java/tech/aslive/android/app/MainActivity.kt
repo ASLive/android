@@ -3,6 +3,8 @@ package tech.aslive.android.app
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Message
+import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -60,6 +62,10 @@ class MainActivity : AppCompatActivity() {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         dummy_button.setOnTouchListener(mDelayHideTouchListener)
+
+        socket_button.setOnClickListener {
+            ShutdownAsyncTask(SocketHandler()).execute()
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -129,5 +135,23 @@ class MainActivity : AppCompatActivity() {
          * and a change of the status and navigation bar.
          */
         private val UI_ANIMATION_DELAY = 300
+
+        /**
+         * Return codes for socket connection
+         */
+        @JvmField val ERROR      = 0
+        @JvmField val CONNECTING = 1
+        @JvmField val SENDING    = 2
+        @JvmField val SENT       = 3
+
+        private class SocketHandler internal constructor(): Handler() {
+            override fun handleMessage(msg: Message?) {
+                when (msg?.what) {
+                    ERROR -> {
+                        Log.e("MAIN", "Error message called")
+                    }
+                }
+            }
+        }
     }
 }
